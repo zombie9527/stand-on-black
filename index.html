@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>漫步</title>
+
+</head>
+<body>
+    <canvas id="canvas" style="display: block; width: 1000px;height:600px ; margin: 0 auto;border: 1px solid #000;"></canvas>
+    <h1 style="display: none" id="over">gameover!</h1>
+</body>
+<script>
+    var ManPosition={
+        x:290,
+        y:300,
+        legx:290,
+        legy:390,
+        leftfoot:290,
+        rightfoot:290,
+        movely:440,
+        movery:440
+    },
+    ARM={
+        x:290,
+        y:320,
+        leftx:290,
+        rightx:290,
+        army:370,
+        flag:1
+    }
+    var times,
+        leftleg=1,
+        rightleg=0;
+    var points = [260,350],
+        canvas = document.getElementById("canvas"),
+        context = canvas.getContext("2d"),
+        gameover = document.getElementById("over");
+
+
+    canvas.width = document.documentElement.clientWidth;
+    canvas.height = document.documentElement.clientHeight;
+
+    function drawMan(){
+        //画身子
+        context.beginPath();
+        context.arc(ManPosition.x,ManPosition.y,20,0,2*Math.PI,true);
+        context.fillStyle = "#000";
+        context.fill();
+        context.fillRect(ManPosition.x-5,ManPosition.y,10,90);
+        context.closePath();
+        //画腿(左)
+        context.beginPath();
+        context.moveTo(ManPosition.legx,ManPosition.legy);
+        context.lineTo(ManPosition.leftfoot,ManPosition.movely);
+        context.lineTo(ManPosition.leftfoot+10,ManPosition.movely);
+        context.lineWidth = 5;
+        context.strokeStyle = "#f00";
+        context.lineCap = "round"
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(ManPosition.legx,ManPosition.legy);
+        context.lineTo(ManPosition.rightfoot,ManPosition.movery);
+        context.lineTo(ManPosition.rightfoot+10,ManPosition.movery);
+        context.strokeStyle = "#000";
+        context.stroke();
+
+        //画胳膊
+        context.beginPath();
+        context.moveTo(ARM.x,ARM.y);
+        context.lineTo(ARM.leftx,ARM.army);
+        context.moveTo(ARM.x,ARM.y);
+        context.lineTo(ARM.rightx,ARM.army);
+        context.stroke();
+    }
+    drawWays();
+    function drawWays(){
+        context.clearRect(0,0,canvas.width,canvas.height);
+        drawMan();
+
+        context.lineWidth = 5;
+        context.lineCap = "square"
+        context.strokeStyle = "#000";
+
+        context.beginPath();
+        context.moveTo(points[0],445);
+        for(var i = 1;i<points.length;i++){
+            if(points[points.length-1]<canvas.width){
+                points.push(points[points.length-1]+parseInt(Math.random()*70+40))
+            }
+            context.lineTo(points[i],445);
+            context.moveTo(points[i]+10,445);
+        }
+        context.closePath();
+        context.stroke();
+    }
+    function moveMap(){
+        for(let i = 0;i<points.length;i++){
+            points[i] = points[i]-5;
+        }
+        if(rightleg){
+            ManPosition.leftfoot = ManPosition.leftfoot-5;
+            ManPosition.rightfoot = ManPosition.rightfoot+5;
+            ARM.leftx -= 5;
+            ARM.rightx += 5;
+        }
+        if(leftleg){
+            ManPosition.leftfoot = ManPosition.leftfoot+5;
+            ManPosition.rightfoot = ManPosition.rightfoot-5;
+            ARM.leftx += 5;
+            ARM.rightx -= 5;
+        }
+        let bottom = Math.abs(ManPosition.leftfoot - ManPosition.rightfoot)/2;
+        if(bottom>49){
+            stopMove;
+        }
+        let height = 50-parseInt(Math.sqrt(2500-bottom*bottom));
+        ManPosition.legy = 390+height;
+        ManPosition.y = 300+height;
+        ARM.y = ManPosition.y+20;
+        ARM.army = ARM.y+50-height;
+        drawWays();
+    }
+    function startMove(){
+        if(rightleg){
+            ManPosition.movery = ManPosition.movery - 5;
+        }else{
+            ManPosition.movely = ManPosition.movely - 5;
+        }
+        
+        times = setInterval(moveMap,25);
+    }
+    function stopMove(){
+        clearInterval(times);
+        ManPosition.movery = ManPosition.movely = 440;
+        moveMap();
+        var temp = leftleg;
+        leftleg = rightleg;
+        rightleg = temp;
+    }
+    canvas.onmousedown=startMove;
+    canvas.onmouseup=stopMove;
+    // canvas.ontouchstart = startMove;
+    // canvas.ontouchend = stopMove;
+</script>
+</html>
