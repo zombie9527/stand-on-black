@@ -1,0 +1,37 @@
+*{
+    margin:0;
+    padding: 0;
+    user-select: none;
+}
+div{
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(200, 200, 200, 0.7);
+    display: none;
+    text-align: center;
+    padding-top: 200px;
+}
+button{
+    font-size: 30px;
+    width: 200px;
+    background-color: #369;
+    color: #fff;
+}
+h1{
+    margin-bottom: 20px;
+}
+#over{
+    color: red;
+}
+.sore{
+    position: absolute;
+    left: 10%;
+    top:5%;
+}
+span{
+    display: block;
+    margin-bottom: 10px;
+}
